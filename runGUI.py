@@ -67,92 +67,18 @@ def submit():
                     'op_surftemp': op_surftemp.get()
                 }              
               )
- # insert data to TR_OP
-    c.execute("""INSERT INTO TR_OP VALUES (:op_year, :op_vessel, :op_serial, :tr_typeset,
-                                           :tr_design, :tr_door, :tr_mesh, :tr_trawlid, 
-                                           :tr_settime, :tr_towdur, :tr_speed, :tr_speedunit, 
-                                           :tr_warp)""",
-                {
-                    'op_year': op_year.get(),
-                    'op_vessel': op_vessel.get(),
-                    'op_serial': op_serial.get(),
-                    'tr_typeset': tr_typeset.get(),
-                    'tr_design': tr_design.get(),
-                    'tr_door': tr_door.get(),
-                    'tr_mesh': tr_mesh.get(),
-                    'tr_trawlid': tr_trawlid.get(),
-                    'tr_settime': tr_settime.get(),
-                    'tr_towdur': tr_towdur.get(),
-                    'tr_speed': tr_speed.get(),
-                    'tr_speedunit': tr_speedunit.get(),
-                    'tr_warp': tr_warp.get()
-                }              
-              )   
-    
-    
-    # Clear the text box
-    op_serial.delete(0, END)
-    op_lat.delete(0, END)
-    op_lon.delete(0, END)
-    op_endlat.delete(0, END)
-    op_endlon.delete(0, END)
-    op_beg_bot.delete(0, END)
-    op_end_bot.delete(0, END)
-    tr_settime.delete(0, END)
-    tr_warp.delete(0, END)
-
-    
-    # comitt and close DB connection
-    conn.commit()
-    conn.close()
-
-# Submit Catch to TR_CATCH
-def submit_catch():
-    # Connect
-    conn = sqlite3.connect('mtr20_data.db')
-    c = conn.cursor() 
-
-    # check whether serial + life + spc exists prior to submit
-    # return onscreen error message before c.execute
-
-    # insert in to TR_CATCH
-    c.execute("""INSERT INTO TR_CATCH VALUES (:op_year, :op_vessel, :op_serial, 
-                                             :cat_life, :cat_spc, :cat_Number, 
-                                             :cat_weight)""",
-                {
-                    'op_year': op_year.get(),
-                    'op_vessel': op_vessel.get(),
-                    'op_serial': op_serial.get(),
-                    'cat_life': cat_life.get(),
-                    'cat_spc': cat_spc.get(),
-                    'cat_Number': cat_Number.get(),
-                    'cat_weight': cat_weight.get()
-                }              
-              )   
-    
-    # Clear the text box
-    cat_spc.delete(0, END)
-    cat_Number.delete(0, END)
-    cat_weight.delete(0, END)
-
-    # comitt and close DB connection
-    conn.commit()
-    conn.close()
-
-
-
 
 ########### Build the GUI for data entry
 # Divide root in to 3 panes
-frame_011 = LabelFrame(root, text = "FN011")
-frame_011.grid(row = 0, column = 0)
+#frame_011 = LabelFrame(root, text = "FN011")
+#frame_011.grid(row = 0, column = 0)
 
 frame_121 = LabelFrame(root, text = "FN121")
 frame_121.grid(row=1, column = 0)
 
 
-
 # Build label and entry boxes
+"""
 prjyear = Entry(frame_011, width = 5)
 prjyear.grid(row = 1, column = 1)
 prjyear_label = Label(frame_011, text = "YEAR")
@@ -169,7 +95,7 @@ prjld = Entry(frame_011, width = 5)
 prjld.grid(row = 3, column = 1)
 prjld_label = Label(frame_011, text = "PRJ_LEAD")
 prjld_label.grid(row = 3, column = 0)
-
+"""
 ## create frame_121
 sam = Entry(frame_121, width = 5)
 sam.grid(row = 1, column = 1)
@@ -177,38 +103,54 @@ sam_label = Label(frame_121, text = "SAM")
 sam_label.grid(row = 1, column = 0)
 
 sam_lat = Entry(frame_121, width = 10)
-sam_lat.grid(row = 1, column = 3)
+sam_lat.grid(row = 2, column = 1)
 sam_lat_label = Label(frame_121, text = "LAT")
-sam_lat_label.grid(row = 1, column = 2)
+sam_lat_label.grid(row = 2, column = 0)
 
 sam_lon = Entry(frame_121, width = 10)
-sam_lon.grid(row = 1, column = 5)
-sam_lon_label = Label(frame_121, text = "LAT")
-sam_lon_label.grid(row = 1, column = 4)
+sam_lon.grid(row = 3, column = 1)
+sam_lon_label = Label(frame_121, text = "LON")
+sam_lon_label.grid(row = 3, column = 0)
+
+sam_endlat = Entry(frame_121, width = 10)
+sam_endlat.grid(row = 2, column = 4)
+sam_endlat_label = Label(frame_121, text = "END_LAT")
+sam_endlat_label.grid(row = 2, column = 3)
+
+sam_endlon = Entry(frame_121, width = 10)
+sam_endlon.grid(row = 3, column = 4)
+sam_endlon_label = Label(frame_121, text = "END_LON")
+sam_endlon_label.grid(row = 3, column = 3)
 
 
 # Create FN121 buttons
 def start_trawl():
-    frame_121['bg'] = '#49A'
+    frame_121['bg'] = 'green'
     startcoords = get_coords()
-    print(startcoords)
+    #print(startcoords)
+    sam_lat.insert(0, startcoords['LAT'])
+    sam_lon.insert(0, startcoords['LON'])
 
 def end_trawl():
-    frame_121['bg'] = 'grey'
+    frame_121['bg'] = 'lightgrey'
     endcoords = get_coords()
-    print(endcoords)
-    
+    #print(endcoords)
+    sam_endlat.insert(0, endcoords['LAT'])
+    sam_endlon.insert(0, endcoords['LON'])
+
 
 
 TrawlStart = Button(frame_121, text = "Start Trawl", command = start_trawl)
-TrawlStart.grid(row = 2, column = 0, padx = 20, pady = 20)
+TrawlStart.grid(row = 4, column = 0, padx = 20, pady = 20)
 TrawlEnd = Button(frame_121, text = "End Trawl", command = end_trawl)
-TrawlEnd.grid(row = 2, column = 1, padx = 20, pady = 20)
+TrawlEnd.grid(row = 4, column = 3, padx = 20, pady = 20)
 
 
+def do_submit():
+    pass
 
 # Create submit button
-submit_btn = Button(root, text = "Add Record", command = submit)
+submit_btn = Button(root, text = "Add Record", command = do_submit)
 submit_btn.grid(row = 13, column = 0, pady = 20)
 submit_btn['font'] = font.Font(size = 18)
 
