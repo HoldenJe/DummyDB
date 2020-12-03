@@ -11,11 +11,18 @@ from tkinter import filedialog
 import sqlite3
 import serial
 import datetime
+import time
+import statistics
 #from create_import_csv import *
 
 root = Tk()
 root.title('FishNEED')
-root.geometry("800x600")
+root.geometry("600x600+10+10")
+
+# Create the "is running" variable    
+running = False
+global trawldone
+trawldone = False
 
 # Create/Connect to DB
 conn = sqlite3.connect('data.db')
@@ -35,6 +42,8 @@ c.execute("""CREATE TABLE IF NOT EXISTS FN121 (
 
 # Do commit
 conn.commit()
+
+# in here - query the database to get max SAM and autofill the SAM value so that it is max(SAM) + 1
 
 def get_coords():
     ser = serial.Serial('/dev/ttyS0')
@@ -64,9 +73,17 @@ def clear_contents():
     sam_lon.delete(0,END)
     sam_endlat.delete(0,END)
     sam_endlon.delete(0,END)
+    start_time.delete(0, END)
+    end_time.delete(0,END)
+    heading.delete(0, END)
+    speed.delete(0,END)
+    effdate.delete(0,END)
 
 def submit():
-    pass            
+    current_sam = int(sam.get())
+    next_sam = current_sam + 1
+    clear_contents()            
+    sam.insert(0, next_sam)
               
 
 ########### Build the GUI for data entry
@@ -77,25 +94,6 @@ def submit():
 frame_121 = LabelFrame(root, text = "FN121")
 frame_121.grid(row=1, column = 0, pady = 50, padx = 50)
 
-# Build label and entry boxes
-"""
-prjyear = Entry(frame_011, width = 5)
-prjyear.grid(row = 1, column = 1)
-prjyear_label = Label(frame_011, text = "YEAR")
-prjyear_label.grid(row = 1, column = 0)
-
-
-prjcd = Entry(frame_011, width = 5)
-prjcd.grid(row = 2, column = 1)
-prjcd_label = Label(frame_011, text = "PRJ_CD")
-prjcd_label.grid(row = 2, column = 0)
-
-
-prjld = Entry(frame_011, width = 5)
-prjld.grid(row = 3, column = 1)
-prjld_label = Label(frame_011, text = "PRJ_LEAD")
-prjld_label.grid(row = 3, column = 0)
-"""
 ## create frame_121
 sam = Entry(frame_121, width = 5)
 sam.grid(row = 1, column = 1)
@@ -163,39 +161,60 @@ def get_localtime():
     mytime = datetime.datetime.now()
     mylocaltime = mytime.strftime("%T")
     return(mylocaltime)
-    
 
 def start_trawl(*args):
     global running
-    running = TRUE
-    # frame_121['bg'] = 'green'
+    running = True
+    frame_121['bg'] = 'green'
     startcoords = get_coords()
     #print(startcoords)
     sam_lat.insert(0, startcoords['LAT'])
     sam_lon.insert(0, startcoords['LON'])
     effdate.insert(0, get_localdate())
     start_time.insert(0, get_localtime())
-    log_trawl()
-
+    
 def end_trawl():
     global running
-    running = FALSE
-    # frame_121['bg'] = root.cget('bg')
+    running = False
+    global trawldone
+    trawldone = True
+    frame_121['bg'] = root.cget('bg')
     endcoords = get_coords()
     #print(endcoords)
     sam_endlat.insert(0, endcoords['LAT'])
     sam_endlon.insert(0, endcoords['LON'])
     end_time.insert(0, get_localtime())
+    heading.insert(0, endcoords['HEADING'])
+    speed.insert(0, endcoords['SPEED_KTS'])
 
-# for testing
+"""
+# for logging
 def log_trawl(*args):
+    global trawldone
+    trawldone = False
+    speed = []
+    heading = []
     if running:
         frame_121['bg'] = 'red'
-        print("logging")
-    else: 
+        print('logging')               
+        time.sleep(15)
+        #coords = get_coords()
+        #speed.append(float(coords['SPEED_KTS']))
+        #heading.append(float(coords['HEADING'])) 
+        
+    if trawldone:
+        print('done')
+        #mean_speed = statistics.mean(speed)
+        #mean_heading = statistics.mean(heading)
+        #logged_trawl = {'SPEED': mean_speed, 'HEADING': mean_heading}
+        #print(logged_trawl)
         frame_121['bg'] = root.cget('bg')
-        pass
+        trawldone = False
+    
     root.after(1000, log_trawl)
+
+root.after(10, log_trawl)
+"""
 
 TrawlStart = Button(frame_121, text = "Start Trawl", command = start_trawl)
 TrawlStart.grid(row = 10, column = 0, padx = 20, pady = 20)
@@ -221,7 +240,7 @@ clear_btn = Button(root, text = "Clear Contents", command = clear_contents)
 clear_btn.grid(row = 15, column = 0, pady = 5)
 
 # Create submit button
-submit_btn = Button(root, text = "Add Record", command = do_submit)
+submit_btn = Button(root, text = "Add Record", command = submit) # submit is a pass function, fix do_submit
 submit_btn.grid(row = 13, column = 0, pady = 5)
 #submit_btn['font'] = font.Font(size = 18)
 

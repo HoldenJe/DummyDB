@@ -5,6 +5,9 @@
 
 import serial
 import datetime
+import time
+import statistics
+
 def get_coords():
     ser = serial.Serial('/dev/ttyS0')
     ser.baudrate = 4800
@@ -15,13 +18,6 @@ def get_coords():
         line = line.decode()
         data = line.split(",")
         if data[0] == "$GPRMC":
-            #print (data)
-            #mytime = datetime.datetime.now()
-            #mytimestamp = mytime.strftime("%B %d %Y %I:%M%p")
-            #print (mytimestamp, data[3], data[5])
-            # data[1] gives UTC, EDT = UTC-40000
-            #print (data[9],data[1], data[3:7])
-            #return(data)
             break
     coords = {'LAT': data[3],'LON': data[5], 'SPEED_KTS': data[7], 'HEADING': data[8]}
     return(coords)
@@ -51,3 +47,16 @@ def get_localtime():
     mylocaltime = mytime.strftime("%T")
     return(mylocaltime)
     
+def log_trawl():
+    speed = []
+    heading = []
+    for i in range(5):
+            coords = get_coords()
+            speed.append(float(coords['SPEED_KTS']))
+            heading.append(float(coords['HEADING']))                
+            time.sleep(15)
+            #return(coords['SPEED_KTS'])    
+    mean_speed = statistics.mean(speed)
+    mean_heading = statistics.mean(heading)
+    logged_trawl = {'SPEED': mean_speed, 'HEADING': mean_heading}
+    return(logged_trawl)
