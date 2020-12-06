@@ -63,12 +63,13 @@ def get_coords():
         line = line.decode()
         data = line.split(",")
         if data[0] == "$GPRMC":
+            coords = {'LAT': float(data[3]),'LON': float(data[5]), 'SPEED_KTS': float(data[7]), 'HEADING': float(data[8])}
+            return(coords)
             break
-    coords = {'LAT': float(data[3]),'LON': float(data[5]), 'SPEED_KTS': float(data[7]), 'HEADING': float(data[8])}
-    return(coords)
 
 def clear_contents():
-    sam.delete(0,END) # inside the submit button, create samnext variable so when you submit, it will replace sam with samnext in box
+    sam.delete(0,END) 
+    area.delete(0,END)
     sam_lat.delete(0,END)
     sam_lon.delete(0,END)
     sam_endlat.delete(0,END)
@@ -107,49 +108,50 @@ area_label = Label(frame_121, text = "AREA")
 area_label.grid(row = 2, column = 0)
 
 effdate = Entry(frame_121, width = 10, bg = 'grey')
-effdate.grid(row = 3, column = 1)
+effdate.grid(row = 4, column = 1)
 effdate_label = Label(frame_121, text = "EFFDATE")
-effdate_label.grid(row = 3, column = 0)
+effdate_label.grid(row = 4, column = 0)
 
 start_time = Entry(frame_121, width = 10, bg = 'grey')
-start_time.grid(row = 4, column = 1)
+start_time.grid(row = 5, column = 1)
 start_time_label = Label(frame_121, text = "EFFTIME")
-start_time_label.grid(row = 4, column= 0)
+start_time_label.grid(row = 5, column= 0)
 
 sam_lat = Entry(frame_121, width = 10, bg = 'grey')
-sam_lat.grid(row = 5, column = 1)
+sam_lat.grid(row = 6, column = 1)
 sam_lat_label = Label(frame_121, text = "LAT")
-sam_lat_label.grid(row = 5, column = 0)
+sam_lat_label.grid(row = 6, column = 0)
 
 sam_lon = Entry(frame_121, width = 10, bg = 'grey')
-sam_lon.grid(row = 6, column = 1)
+sam_lon.grid(row = 7, column = 1)
 sam_lon_label = Label(frame_121, text = "LON")
-sam_lon_label.grid(row = 6, column = 0)
-
-end_time = Entry(frame_121, width = 10, bg = 'grey')
-end_time.grid(row = 1, column = 4)
-end_time_label = Label(frame_121, text = "ENDTIME")
-end_time_label.grid(row = 1, column= 3)
-
-sam_endlat = Entry(frame_121, width = 10, bg = 'grey')
-sam_endlat.grid(row = 2, column = 4)
-sam_endlat_label = Label(frame_121, text = "END_LAT")
-sam_endlat_label.grid(row = 2, column = 3)
-
-sam_endlon = Entry(frame_121, width = 10, bg = 'grey')
-sam_endlon.grid(row = 3, column = 4)
-sam_endlon_label = Label(frame_121, text = "END_LON")
-sam_endlon_label.grid(row = 3, column = 3)
+sam_lon_label.grid(row = 7, column = 0)
 
 heading = Entry(frame_121, width = 5, bg = 'grey')
-heading.grid(row = 4, column = 4)
+heading.grid(row = 3, column = 4)
 heading_label = Label(frame_121, text = "HEADING")
-heading_label.grid(row = 4, column = 3)
+heading_label.grid(row = 3, column = 3)
 
 speed = Entry(frame_121, width = 5, bg = 'grey')
-speed.grid(row = 5, column = 4)
+speed.grid(row = 4, column = 4)
 speed_label = Label(frame_121, text = "SPEED")
-speed_label.grid(row = 5, column = 3)
+speed_label.grid(row = 4, column = 3)
+
+end_time = Entry(frame_121, width = 10, bg = 'grey')
+end_time.grid(row = 5, column = 4)
+end_time_label = Label(frame_121, text = "ENDTIME")
+end_time_label.grid(row = 5, column= 3)
+
+sam_endlat = Entry(frame_121, width = 10, bg = 'grey')
+sam_endlat.grid(row = 6, column = 4)
+sam_endlat_label = Label(frame_121, text = "END_LAT")
+sam_endlat_label.grid(row = 6, column = 3)
+
+sam_endlon = Entry(frame_121, width = 10, bg = 'grey')
+sam_endlon.grid(row = 7, column = 4)
+sam_endlon_label = Label(frame_121, text = "END_LON")
+sam_endlon_label.grid(row = 7, column = 3)
+
 
 # Create FN121 buttons
 def get_localdate():
