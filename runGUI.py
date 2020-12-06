@@ -110,7 +110,7 @@ def start_trawl(event):
     effdate.insert(0, get_localdate())
     start_time.insert(0, get_localtime())
     
-def end_trawl():
+def end_trawl(event):
     global running
     running = False
     global trawldone
@@ -179,6 +179,7 @@ TrawlStart.grid(row = 10, column = 0, padx = 20, pady = 20)
 TrawlStart.bind("<Return>", start_trawl)
 TrawlEnd = Button(frame_121, text = "End Trawl", command = end_trawl)
 TrawlEnd.grid(row = 10, column = 3, padx = 20, pady = 20)
+TrawlEnd.bind("<Return>", end_trawl)
 
 effdate = Entry(frame_121, width = 10, bg = 'grey')
 effdate.grid(row = 4, column = 1)
