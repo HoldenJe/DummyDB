@@ -45,6 +45,8 @@ conn.commit()
 
 # in here - query the database to get max SAM and autofill the SAM value so that it is max(SAM) + 1
 
+######## all my functions
+
 def get_coords():
     ser = serial.Serial('/dev/ttyS0')
     ser.baudrate = 4800
@@ -85,73 +87,6 @@ def submit():
     next_sam = current_sam + 1
     clear_contents()            
     sam.insert(0, next_sam)
-              
-
-########### Build the GUI for data entry
-# Divide root in to 3 panes
-#frame_011 = LabelFrame(root, text = "FN011")
-#frame_011.grid(row = 0, column = 0)
-
-frame_121 = LabelFrame(root, text = "FN121")
-frame_121.grid(row=1, column = 0, pady = 50, padx = 50)
-
-## create frame_121
-sam = Entry(frame_121, width = 5)
-sam.grid(row = 1, column = 1)
-sam_label = Label(frame_121, text = "SAM")
-sam_label.grid(row = 1, column = 0)
-sam.focus_set()
-
-area = Entry(frame_121, width = 5)
-area.grid(row = 2, column = 1)
-area_label = Label(frame_121, text = "AREA")
-area_label.grid(row = 2, column = 0)
-
-effdate = Entry(frame_121, width = 10, bg = 'grey')
-effdate.grid(row = 4, column = 1)
-effdate_label = Label(frame_121, text = "EFFDATE")
-effdate_label.grid(row = 4, column = 0)
-
-start_time = Entry(frame_121, width = 10, bg = 'grey')
-start_time.grid(row = 5, column = 1)
-start_time_label = Label(frame_121, text = "EFFTIME")
-start_time_label.grid(row = 5, column= 0)
-
-sam_lat = Entry(frame_121, width = 10, bg = 'grey')
-sam_lat.grid(row = 6, column = 1)
-sam_lat_label = Label(frame_121, text = "LAT")
-sam_lat_label.grid(row = 6, column = 0)
-
-sam_lon = Entry(frame_121, width = 10, bg = 'grey')
-sam_lon.grid(row = 7, column = 1)
-sam_lon_label = Label(frame_121, text = "LON")
-sam_lon_label.grid(row = 7, column = 0)
-
-heading = Entry(frame_121, width = 5, bg = 'grey')
-heading.grid(row = 3, column = 4)
-heading_label = Label(frame_121, text = "HEADING")
-heading_label.grid(row = 3, column = 3)
-
-speed = Entry(frame_121, width = 5, bg = 'grey')
-speed.grid(row = 4, column = 4)
-speed_label = Label(frame_121, text = "SPEED")
-speed_label.grid(row = 4, column = 3)
-
-end_time = Entry(frame_121, width = 10, bg = 'grey')
-end_time.grid(row = 5, column = 4)
-end_time_label = Label(frame_121, text = "ENDTIME")
-end_time_label.grid(row = 5, column= 3)
-
-sam_endlat = Entry(frame_121, width = 10, bg = 'grey')
-sam_endlat.grid(row = 6, column = 4)
-sam_endlat_label = Label(frame_121, text = "END_LAT")
-sam_endlat_label.grid(row = 6, column = 3)
-
-sam_endlon = Entry(frame_121, width = 10, bg = 'grey')
-sam_endlon.grid(row = 7, column = 4)
-sam_endlon_label = Label(frame_121, text = "END_LON")
-sam_endlon_label.grid(row = 7, column = 3)
-
 
 # Create FN121 buttons
 def get_localdate():
@@ -164,7 +99,7 @@ def get_localtime():
     mylocaltime = mytime.strftime("%T")
     return(mylocaltime)
 
-def start_trawl(*args):
+def start_trawl(event):
     global running
     running = True
     frame_121['bg'] = 'green'
@@ -216,12 +151,81 @@ def log_trawl(*args):
     root.after(1000, log_trawl)
 
 root.after(10, log_trawl)
-"""
+"""              
 
+########### Build the GUI for data entry
+# Divide root in to 3 panes
+#frame_011 = LabelFrame(root, text = "FN011")
+#frame_011.grid(row = 0, column = 0)
+
+frame_121 = LabelFrame(root, text = "FN121")
+frame_121.grid(row=1, column = 0, pady = 50, padx = 50)
+
+## create frame_121
+sam = Entry(frame_121, width = 5)
+sam.grid(row = 1, column = 1)
+sam_label = Label(frame_121, text = "SAM")
+sam_label.grid(row = 1, column = 0)
+sam.focus_set()
+
+area = Entry(frame_121, width = 5)
+area.grid(row = 2, column = 1)
+area_label = Label(frame_121, text = "AREA")
+area_label.grid(row = 2, column = 0)
+
+# move these up here to set the tab order
 TrawlStart = Button(frame_121, text = "Start Trawl", command = start_trawl)
 TrawlStart.grid(row = 10, column = 0, padx = 20, pady = 20)
+TrawlStart.bind("<Return>", start_trawl)
 TrawlEnd = Button(frame_121, text = "End Trawl", command = end_trawl)
 TrawlEnd.grid(row = 10, column = 3, padx = 20, pady = 20)
+
+effdate = Entry(frame_121, width = 10, bg = 'grey')
+effdate.grid(row = 4, column = 1)
+effdate_label = Label(frame_121, text = "EFFDATE")
+effdate_label.grid(row = 4, column = 0)
+
+start_time = Entry(frame_121, width = 10, bg = 'grey')
+start_time.grid(row = 5, column = 1)
+start_time_label = Label(frame_121, text = "EFFTIME")
+start_time_label.grid(row = 5, column= 0)
+
+sam_lat = Entry(frame_121, width = 10, bg = 'grey')
+sam_lat.grid(row = 6, column = 1)
+sam_lat_label = Label(frame_121, text = "LAT")
+sam_lat_label.grid(row = 6, column = 0)
+
+sam_lon = Entry(frame_121, width = 10, bg = 'grey')
+sam_lon.grid(row = 7, column = 1)
+sam_lon_label = Label(frame_121, text = "LON")
+sam_lon_label.grid(row = 7, column = 0)
+
+heading = Entry(frame_121, width = 5, bg = 'grey')
+heading.grid(row = 3, column = 4)
+heading_label = Label(frame_121, text = "HEADING")
+heading_label.grid(row = 3, column = 3)
+
+speed = Entry(frame_121, width = 5, bg = 'grey')
+speed.grid(row = 4, column = 4)
+speed_label = Label(frame_121, text = "SPEED")
+speed_label.grid(row = 4, column = 3)
+
+end_time = Entry(frame_121, width = 10, bg = 'grey')
+end_time.grid(row = 5, column = 4)
+end_time_label = Label(frame_121, text = "ENDTIME")
+end_time_label.grid(row = 5, column= 3)
+
+sam_endlat = Entry(frame_121, width = 10, bg = 'grey')
+sam_endlat.grid(row = 6, column = 4)
+sam_endlat_label = Label(frame_121, text = "END_LAT")
+sam_endlat_label.grid(row = 6, column = 3)
+
+sam_endlon = Entry(frame_121, width = 10, bg = 'grey')
+sam_endlon.grid(row = 7, column = 4)
+sam_endlon_label = Label(frame_121, text = "END_LON")
+sam_endlon_label.grid(row = 7, column = 3)
+
+
 
 
 def do_submit():
