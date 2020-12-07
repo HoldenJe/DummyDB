@@ -72,22 +72,53 @@ def get_coords():
 def clear_contents():
     sam.delete(0,END) 
     area.delete(0,END)
+    clear_start()
+    clear_end()
+
+def clear_start():
+    effdate.delete(0,END)
     sam_lat.delete(0,END)
     sam_lon.delete(0,END)
+    start_time.delete(0, END)
+
+
+def clear_end():
     sam_endlat.delete(0,END)
     sam_endlon.delete(0,END)
-    start_time.delete(0, END)
     end_time.delete(0,END)
     heading.delete(0, END)
     speed.delete(0,END)
-    effdate.delete(0,END)
 
+'''
+global errortext    
+errortext = "error message goes here"
+errorlabel = Label(root, text = errortext)
+errorlabel.grid(row = 17, column = 0)
+'''
+        
 def submit():
-    current_sam = int(sam.get())
-    next_sam = current_sam + 1
-    clear_contents()            
-    sam.insert(0, next_sam)
-
+    current_sam = sam.get()
+    
+    if len(current_sam) > 0:
+        try:
+            next_sam = int(current_sam) + 1
+            clear_contents()            
+            sam.insert(0, next_sam)
+            errorlabel.grid_forget()
+            area.focus_set()
+            #global errortext
+            #errortext = "no errors"
+        except:
+            #global errortext
+            #errortext = "SAM must be an integer"
+            pass        
+ 
+    else:
+        sam.focus_set()
+        #global errortext
+        #errortext = "SAM can't be empty"
+        pass
+        
 # Create FN121 buttons
 def get_localdate():
     mytime = datetime.datetime.now()
@@ -99,7 +130,8 @@ def get_localtime():
     mylocaltime = mytime.strftime("%T")
     return(mylocaltime)
 
-def start_trawl(event):
+def start_trawl(*args):
+    clear_start()
     global running
     running = True
     frame_121['bg'] = 'green'
@@ -110,7 +142,8 @@ def start_trawl(event):
     effdate.insert(0, get_localdate())
     start_time.insert(0, get_localtime())
     
-def end_trawl(event):
+def end_trawl(*args):
+    clear_end()
     global running
     running = False
     global trawldone
@@ -177,9 +210,11 @@ area_label.grid(row = 2, column = 0)
 TrawlStart = Button(frame_121, text = "Start Trawl", command = start_trawl)
 TrawlStart.grid(row = 10, column = 0, padx = 20, pady = 20)
 TrawlStart.bind("<Return>", start_trawl)
+TrawlStart.bind("Button-1", start_trawl)
 TrawlEnd = Button(frame_121, text = "End Trawl", command = end_trawl)
 TrawlEnd.grid(row = 10, column = 3, padx = 20, pady = 20)
 TrawlEnd.bind("<Return>", end_trawl)
+TrawlEnd.bind("Button-1", end_trawl)
 
 effdate = Entry(frame_121, width = 10, bg = 'grey')
 effdate.grid(row = 4, column = 1)
